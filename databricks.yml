@@ -48,6 +48,8 @@ targets:
     default: true       # used when no -t flag is passed locally
     workspace:
       host: https://dbc-2e43b02f-eefb.cloud.databricks.com
+    variables:
+      schema: popmart_medallion_dev
 
   # ── Staging — shared CI environment, deployed automatically on merge ───────
   staging:

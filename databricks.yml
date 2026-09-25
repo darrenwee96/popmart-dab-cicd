@@ -56,7 +56,7 @@ targets:
     # run_as:
     #   service_principal_name: popmart-prod-sp
     variables:
-      catalog: popmart
+      catalog: popmart           # TODO: swap to popmart_prod once created via UI
       schema: popmart_medallion
       source_catalog: popmart
       source_schema: default

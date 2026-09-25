@@ -24,7 +24,7 @@ jobs:
         env:
           DATABRICKS_HOST:  ${{ secrets.DATABRICKS_DEV_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DEV_TOKEN }}
-        run: databricks bundle deploy -t dev
+        run: databricks bundle deploy -t dev --auto-approve
 
   # ── Step 2: Deploy to prod (requires dev to succeed + manual approval) ─────
   deploy-prod:
@@ -48,4 +48,4 @@ jobs:
         env:
           DATABRICKS_HOST:  ${{ secrets.DATABRICKS_PROD_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_PROD_TOKEN }}
-        run: databricks bundle deploy -t prod
+        run: databricks bundle deploy -t prod --auto-approve

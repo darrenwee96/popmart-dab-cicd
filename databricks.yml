@@ -24,16 +24,16 @@ include:
 variables:
   catalog:
     description: Unity Catalog where Silver & Gold tables are published.
-    default: main
+    default: popmart
   schema:
     description: Schema where Silver & Gold tables are published.
     default: popmart_medallion
   source_catalog:
     description: Catalog holding the Bronze source tables (ingested by Lakeflow Connect).
-    default: main
+    default: popmart
   source_schema:
     description: Schema holding the Bronze source tables.
-    default: popmart
+    default: default
   notification_email:
     description: Email address for job failure alerts.
     default: data-platform@popmart.com
@@ -56,7 +56,7 @@ targets:
     # run_as:
     #   service_principal_name: popmart-prod-sp
     variables:
-      catalog: prod
+      catalog: popmart
       schema: popmart_medallion
-      source_catalog: prod
-      source_schema: popmart
+      source_catalog: popmart
+      source_schema: default

@@ -33,7 +33,7 @@ jobs:
     needs: deploy-dev             # only runs if deploy-dev succeeds
 
     # "production" is a GitHub Environment with required reviewers configured.
-    # Set this up at: repo Settings → Environments → production → Required reviewers
+    # To manage reviewers: repo Settings → Environments → production → Deployment protection rules
     environment: production
 
     steps:

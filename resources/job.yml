@@ -21,8 +21,7 @@ resources:
           depends_on:
             - task_key: run_medallion_pipeline
           notebook_task:
-            notebook_path: ./src/notebooks/post_pipeline_report.py
-            source: WORKSPACE
+            notebook_path: ../src/notebooks/post_pipeline_report.py
             base_parameters:
               catalog: "${var.catalog}"
               schema:  "${var.schema}"

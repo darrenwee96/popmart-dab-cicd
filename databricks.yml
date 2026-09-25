@@ -4,15 +4,17 @@
 # Stack:
 #   • Lakeflow Declarative Pipeline (DLT): Bronze → Silver → Gold
 #   • Lakeflow Job: orchestrates pipeline + post-run report notebook
-#   • GitHub Actions CI/CD: PR validation → deploy dev → deploy prod
+#   • GitHub Actions CI/CD: PR validation → deploy staging → deploy prod
 #
 # Targets:
-#   dev   — mode: development  (names auto-prefixed, schedules paused, isolated)
-#   prod  — mode: production   (no prefix, strict validation, runs as SP)
+#   dev      — mode: development  (LOCAL only — names auto-prefixed, schedules paused)
+#   staging  — shared CI environment, [staging] prefix, same schema as dev
+#   prod     — mode: production   (no prefix, strict validation, approval gate)
 #
-# Quick start:
+# Quick start (local):
 #   databricks bundle validate             # validates against dev (default)
-#   databricks bundle deploy               # deploy to dev
+#   databricks bundle deploy               # deploy your personal dev copy
+#   databricks bundle deploy -t staging    # deploy to shared staging
 #   databricks bundle deploy -t prod       # promote to prod
 # ============================================================================
 bundle:
@@ -40,14 +42,28 @@ variables:
 
 targets:
 
-  # ── Developer sandbox — isolated paths, schedules paused ──────────────────
+  # ── LOCAL dev sandbox — never deployed by CI/CD ───────────────────────────
   dev:
     mode: development   # resource names auto-prefixed: [dev <your-username>]
-    default: true       # used when no -t flag is passed
+    default: true       # used when no -t flag is passed locally
     workspace:
       host: https://dbc-2e43b02f-eefb.cloud.databricks.com
 
-  # ── Production — no prefix, strict validation, runs as service principal ──
+  # ── Staging — shared CI environment, deployed automatically on merge ───────
+  staging:
+    workspace:
+      host: https://dbc-2e43b02f-eefb.cloud.databricks.com
+      root_path: /Workspace/Users/darren.wee@databricks.com/.bundle/${bundle.name}/staging
+    presets:
+      name_prefix: "[staging] "   # keeps staging resources distinct from prod in same workspace
+      jobs_max_concurrent_runs: 1
+    variables:
+      catalog: popmart
+      schema: popmart_medallion
+      source_catalog: popmart
+      source_schema: default
+
+  # ── Production — no prefix, strict validation, approval gate required ──────
   prod:
     mode: production
     workspace:

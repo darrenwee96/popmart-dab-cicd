@@ -30,14 +30,14 @@ jobs:
       - name: Install test dependencies
         run: pip install pytest
 
-      # 5. Validate the bundle against the dev target
+      # 5. Validate the bundle against the staging target
       #    Catches YAML errors, missing resource references, and schema violations
       #    BEFORE any code lands on main.
-      - name: Validate bundle (dev target)
+      - name: Validate bundle (staging target)
         env:
-          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_DEV_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DEV_TOKEN }}
-        run: databricks bundle validate -t dev
+          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_STAGING_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_STAGING_TOKEN }}
+        run: databricks bundle validate -t staging
 
       # 6. Run unit tests (no Databricks connection needed)
       - name: Run unit tests

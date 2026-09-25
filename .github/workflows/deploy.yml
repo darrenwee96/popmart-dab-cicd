@@ -7,9 +7,9 @@ on:
 
 jobs:
 
-  # ── Step 1: Deploy to dev ──────────────────────────────────────────────────
-  deploy-dev:
-    name: Deploy → dev
+  # ── Step 1: Deploy to staging ──────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → staging
     runs-on: ubuntu-latest
 
     steps:
@@ -20,17 +20,17 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-      - name: Deploy to dev
+      - name: Deploy to staging
         env:
-          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_DEV_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DEV_TOKEN }}
-        run: databricks bundle deploy -t dev --auto-approve
+          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_STAGING_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_STAGING_TOKEN }}
+        run: databricks bundle deploy -t staging --auto-approve
 
-  # ── Step 2: Deploy to prod (requires dev to succeed + manual approval) ─────
+  # ── Step 2: Deploy to prod (requires staging to succeed + manual approval) ─
   deploy-prod:
     name: Deploy → prod
     runs-on: ubuntu-latest
-    needs: deploy-dev             # only runs if deploy-dev succeeds
+    needs: deploy-staging         # only runs if deploy-staging succeeds
 
     # "production" is a GitHub Environment with required reviewers configured.
     # To manage reviewers: repo Settings → Environments → production → Deployment protection rules

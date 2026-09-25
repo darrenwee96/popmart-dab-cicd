@@ -1,7 +1,7 @@
 resources:
   pipelines:
-    popmart_medallion:
-      name: popmart_medallion
+    amer_trade_orders_medallion:
+      name: amer_trade_orders_medallion
 
       # Target catalog & schema for Silver and Gold tables
       catalog: ${var.catalog}

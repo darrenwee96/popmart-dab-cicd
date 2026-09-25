@@ -1,9 +1,9 @@
 resources:
   jobs:
-    popmart_medallion_job:
-      name: popmart_medallion_orchestrator
+    amer_trade_orders_job:
+      name: amer_trade_orders_orchestrator
       description: >
-        Orchestrates the Pop Mart medallion pipeline.
+        Orchestrates the AMER Trade Orders medallion pipeline.
         Task 1 refreshes all DLT materialized views (Bronze → Silver → Gold).
         Task 2 runs a notebook that validates Gold table counts and prints
         data-quality expectation metrics.
@@ -13,7 +13,7 @@ resources:
         - task_key: run_amer_trade_orders_pipeline
           description: "Refresh Bronze → Silver → Gold materialized views via DLT"
           pipeline_task:
-            pipeline_id: ${resources.pipelines.popmart_medallion.id}
+            pipeline_id: ${resources.pipelines.amer_trade_orders_medallion.id}
 
         # ── Task 2: Post-pipeline report notebook ──────────────────────────
         - task_key: post_pipeline_report

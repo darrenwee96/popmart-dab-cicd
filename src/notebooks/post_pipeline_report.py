@@ -1,6 +1,6 @@
 # Databricks notebook source
 # ============================================================================
-# Pop Mart Medallion Pipeline — Post-Run Report Notebook
+# AMER Trade Orders Medallion Pipeline — Post-Run Report Notebook
 #
 # Runs automatically after each DLT pipeline refresh (Task 2 of the job).
 # Validates Gold-layer table row counts and prints data-quality metrics
@@ -9,7 +9,7 @@
 
 # COMMAND ----------
 # MAGIC %md
-# MAGIC # 📊 Pop Mart — Post-Pipeline Report
+# MAGIC # 📊 Pop Mart AMER — Post-Pipeline Report
 # MAGIC
 # MAGIC This notebook runs after each **Lakeflow Declarative Pipeline** refresh.
 # MAGIC
@@ -20,8 +20,8 @@
 # COMMAND ----------
 
 # Widget parameters are injected by the Lakeflow Job
-dbutils.widgets.text("catalog", "main",              "Unity Catalog")
-dbutils.widgets.text("schema",  "popmart_medallion", "Schema")
+dbutils.widgets.text("catalog", "popmart",            "Unity Catalog")
+dbutils.widgets.text("schema",  "popmart_medallion",  "Schema")
 
 catalog = dbutils.widgets.get("catalog")
 schema  = dbutils.widgets.get("schema")
@@ -35,18 +35,13 @@ print(f"▶ Reporting on:  {catalog}.{schema}")
 # COMMAND ----------
 
 gold_tables = [
-    "gold_sales_daily",
-    "gold_ip_performance",
-    "gold_secret_hit_rates",
-    "gold_omnichannel_customer",
-    "gold_member_tier_summary",
-    "gold_store_performance",
-    "gold_inventory_health",
-    "gold_supply_chain_supplier",
+    "gold_daily_sales_kpi",
+    "gold_product_performance",
+    "gold_channel_country_daily",
 ]
 
-print(f"{'Table':<45} {'Row Count':>12}")
-print("─" * 59)
+print(f"{'Table':<35} {'Row Count':>12}")
+print("─" * 49)
 
 all_ok = True
 for table in gold_tables:
@@ -56,13 +51,36 @@ for table in gold_tables:
         status = "✅" if count > 0 else "⚠️  EMPTY"
         if count == 0:
             all_ok = False
-        print(f"{table:<45} {count:>12,}  {status}")
+        print(f"{table:<35} {count:>12,}  {status}")
     except Exception as e:
         all_ok = False
-        print(f"{table:<45} {'ERROR':>12}  ❌ {e}")
+        print(f"{table:<35} {'ERROR':>12}  ❌ {e}")
 
 print()
 print("✅ All Gold tables populated." if all_ok else "⚠️  Some tables have issues — check above.")
+
+# COMMAND ----------
+# MAGIC %md
+# MAGIC ## Silver Layer — Spot Check
+
+# COMMAND ----------
+
+silver_tables = [
+    "silver_order_line_items",
+    "silver_trade_order_daily",
+]
+
+print(f"{'Table':<35} {'Row Count':>12}")
+print("─" * 49)
+
+for table in silver_tables:
+    fq = f"`{catalog}`.`{schema}`.`{table}`"
+    try:
+        count = spark.table(fq).count()
+        status = "✅" if count > 0 else "⚠️  EMPTY"
+        print(f"{table:<35} {count:>12,}  {status}")
+    except Exception as e:
+        print(f"{table:<35} {'ERROR':>12}  ❌ {e}")
 
 # COMMAND ----------
 # MAGIC %md
@@ -86,7 +104,7 @@ LATERAL VIEW EXPLODE(details:flow_progress.data_quality.expectations) AS exp
 WHERE  pipeline_id = (
          SELECT pipeline_id
          FROM   system.lakeflow.pipelines
-         WHERE  name LIKE '%popmart_medallion%'
+         WHERE  name LIKE '%amer_trade_orders%'
          ORDER  BY created_at DESC
          LIMIT  1
        )

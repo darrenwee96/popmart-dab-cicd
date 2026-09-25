@@ -10,7 +10,7 @@ resources:
 
       tasks:
         # ── Task 1: Refresh the Lakeflow Declarative Pipeline ──────────────
-        - task_key: run_medallion_pipeline
+        - task_key: run_amer_trade_orders_pipeline
           description: "Refresh Bronze → Silver → Gold materialized views via DLT"
           pipeline_task:
             pipeline_id: ${resources.pipelines.popmart_medallion.id}
@@ -19,7 +19,7 @@ resources:
         - task_key: post_pipeline_report
           description: "Validate Gold row counts & print DQ expectation metrics"
           depends_on:
-            - task_key: run_medallion_pipeline
+            - task_key: run_amer_trade_orders_pipeline
           notebook_task:
             notebook_path: ../src/notebooks/post_pipeline_report.py
             base_parameters:

@@ -1,0 +1,44 @@
+name: PR Validation
+
+# ── Trigger: every pull request targeting main ───────────────────────────────
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate bundle & run unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the source code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Set up Python (for pytest)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Install the Databricks CLI
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      # 4. Install Python test dependencies
+      - name: Install test dependencies
+        run: pip install pytest
+
+      # 5. Validate the bundle against the dev target
+      #    Catches YAML errors, missing resource references, and schema violations
+      #    BEFORE any code lands on main.
+      - name: Validate bundle (dev target)
+        env:
+          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_DEV_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DEV_TOKEN }}
+        run: databricks bundle validate -t dev
+
+      # 6. Run unit tests (no Databricks connection needed)
+      - name: Run unit tests
+        run: pytest tests/unit -v

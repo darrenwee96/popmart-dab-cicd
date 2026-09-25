@@ -1,0 +1,51 @@
+name: Deploy
+
+# ── Trigger: every push (merge) to main ─────────────────────────────────────
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  # ── Step 1: Deploy to dev ──────────────────────────────────────────────────
+  deploy-dev:
+    name: Deploy → dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Deploy to dev
+        env:
+          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_DEV_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_DEV_TOKEN }}
+        run: databricks bundle deploy -t dev
+
+  # ── Step 2: Deploy to prod (requires dev to succeed + manual approval) ─────
+  deploy-prod:
+    name: Deploy → prod
+    runs-on: ubuntu-latest
+    needs: deploy-dev             # only runs if deploy-dev succeeds
+
+    # "production" is a GitHub Environment with required reviewers configured.
+    # Set this up at: repo Settings → Environments → production → Required reviewers
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Deploy to prod
+        env:
+          DATABRICKS_HOST:  ${{ secrets.DATABRICKS_PROD_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_PROD_TOKEN }}
+        run: databricks bundle deploy -t prod

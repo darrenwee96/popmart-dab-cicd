@@ -1,0 +1,56 @@
+resources:
+  jobs:
+    popmart_medallion_job:
+      name: popmart_medallion_orchestrator
+      description: >
+        Orchestrates the Pop Mart medallion pipeline.
+        Task 1 refreshes all DLT materialized views (Bronze → Silver → Gold).
+        Task 2 runs a notebook that validates Gold table counts and prints
+        data-quality expectation metrics.
+
+      tasks:
+        # ── Task 1: Refresh the Lakeflow Declarative Pipeline ──────────────
+        - task_key: run_medallion_pipeline
+          description: "Refresh Bronze → Silver → Gold materialized views via DLT"
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.popmart_medallion.id}
+
+        # ── Task 2: Post-pipeline report notebook ──────────────────────────
+        - task_key: post_pipeline_report
+          description: "Validate Gold row counts & print DQ expectation metrics"
+          depends_on:
+            - task_key: run_medallion_pipeline
+          notebook_task:
+            notebook_path: ./src/notebooks/post_pipeline_report.py
+            source: WORKSPACE
+            base_parameters:
+              catalog: "${var.catalog}"
+              schema:  "${var.schema}"
+          environment_key: serverless_env
+
+      # ── Serverless compute for the notebook task ────────────────────────
+      environments:
+        - environment_key: serverless_env
+          spec:
+            client: "1"
+
+      # ── Schedule: daily at 03:00 UTC ────────────────────────────────────
+      schedule:
+        quartz_cron_expression: "0 0 3 * * ?"
+        timezone_id: UTC
+        pause_status: UNPAUSED   # dev mode overrides this → PAUSED automatically
+
+      # ── Notifications ────────────────────────────────────────────────────
+      email_notifications:
+        on_failure:
+          - ${var.notification_email}
+        on_duration_warning_threshold_exceeded:
+          - ${var.notification_email}
+
+      health:
+        rules:
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 7200    # alert if job takes > 2 hours
+
+      max_concurrent_runs: 1

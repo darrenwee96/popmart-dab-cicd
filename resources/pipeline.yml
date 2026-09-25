@@ -1,0 +1,30 @@
+resources:
+  pipelines:
+    popmart_medallion:
+      name: popmart_medallion
+
+      # Target catalog & schema for Silver and Gold tables
+      catalog: ${var.catalog}
+      schema:  ${var.schema}
+
+      serverless: true      # no cluster management required
+      photon: true          # accelerated SQL execution
+      continuous: false     # triggered mode — the Job kicks it off on schedule
+
+      channel: CURRENT      # always use the latest DLT runtime
+
+      # These values are read inside the SQL as ${source_catalog}.${source_schema}
+      configuration:
+        source_catalog: ${var.source_catalog}
+        source_schema:  ${var.source_schema}
+
+      libraries:
+        - glob:
+            include: ../src/transformations/**
+
+      notifications:
+        - email_recipients:
+            - ${var.notification_email}
+          alerts:
+            - on-update-failure
+            - on-update-fatal-failure

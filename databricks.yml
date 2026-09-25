@@ -1,0 +1,62 @@
+# ============================================================================
+# Pop Mart — Databricks Asset Bundle (DAB) CI/CD Demo
+#
+# Stack:
+#   • Lakeflow Declarative Pipeline (DLT): Bronze → Silver → Gold
+#   • Lakeflow Job: orchestrates pipeline + post-run report notebook
+#   • GitHub Actions CI/CD: PR validation → deploy dev → deploy prod
+#
+# Targets:
+#   dev   — mode: development  (names auto-prefixed, schedules paused, isolated)
+#   prod  — mode: production   (no prefix, strict validation, runs as SP)
+#
+# Quick start:
+#   databricks bundle validate             # validates against dev (default)
+#   databricks bundle deploy               # deploy to dev
+#   databricks bundle deploy -t prod       # promote to prod
+# ============================================================================
+bundle:
+  name: popmart_medallion
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog where Silver & Gold tables are published.
+    default: main
+  schema:
+    description: Schema where Silver & Gold tables are published.
+    default: popmart_medallion
+  source_catalog:
+    description: Catalog holding the Bronze source tables (ingested by Lakeflow Connect).
+    default: main
+  source_schema:
+    description: Schema holding the Bronze source tables.
+    default: popmart
+  notification_email:
+    description: Email address for job failure alerts.
+    default: data-platform@popmart.com
+
+targets:
+
+  # ── Developer sandbox — isolated paths, schedules paused ──────────────────
+  dev:
+    mode: development   # resource names auto-prefixed: [dev <your-username>]
+    default: true       # used when no -t flag is passed
+    workspace:
+      host: https://YOUR-DEV-WORKSPACE.azuredatabricks.net
+
+  # ── Production — no prefix, strict validation, runs as service principal ──
+  prod:
+    mode: production
+    workspace:
+      host: https://YOUR-PROD-WORKSPACE.azuredatabricks.net
+    # Uncomment once your service principal is set up:
+    # run_as:
+    #   service_principal_name: popmart-prod-sp
+    variables:
+      catalog: prod
+      schema: popmart_medallion
+      source_catalog: prod
+      source_schema: popmart

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Mart — DAB CI/CD demo</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--db-oat-light);
+      color: var(--db-ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ─────────────────────────────────────────────────────── */
+    .hero {
+      background: var(--db-navy);
+      color: var(--db-white);
+      padding: 80px 64px 72px;
+      position: relative;
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero-nodal {
+      position: absolute;
+      right: -40px;
+      top: -60px;
+      width: 520px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .hero-nodal-2 {
+      position: absolute;
+      left: -80px;
+      bottom: -100px;
+      width: 400px;
+      opacity: 0.10;
+      pointer-events: none;
+      transform: rotate(180deg);
+    }
+    .hero-logo { width: 160px; margin-bottom: 32px; opacity: 0.95; }
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--db-coral);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--db-coral); }
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+    .hero-tags { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-tag {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: 'DM Mono', monospace;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ── SECTION WRAPPER ──────────────────────────────────────────── */
+    .section {
+      padding: 80px 64px;
+    }
+    .section-alt { background: var(--db-white); }
+    .section-dark { background: var(--db-navy); color: var(--db-white); }
+
+    .section-eyebrow {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--db-coral);
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--db-navy);
+      margin-bottom: 8px;
+    }
+    .section-dark h2 { color: var(--db-white); }
+    .section-lead {
+      font-size: 17px;
+      color: var(--db-ink-soft);
+      max-width: 600px;
+      margin-bottom: 48px;
+      line-height: 1.65;
+    }
+    .section-dark .section-lead { color: rgba(255,255,255,0.65); }
+
+    /* ── STAT ROW ─────────────────────────────────────────────────── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+    .stat-card {
+      background: var(--db-white);
+      border-radius: 8px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 12px rgba(27,49,57,0.08);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.45s ease, transform 0.45s ease, box-shadow 0.2s ease;
+    }
+    .stat-card.visible { opacity: 1; transform: translateY(0); }
+    .stat-card:hover { box-shadow: 0 6px 24px rgba(27,49,57,0.14); }
+    .stat-card:nth-child(2) { transition-delay: 0.08s; }
+    .stat-card:nth-child(3) { transition-delay: 0.16s; }
+    .stat-card:nth-child(4) { transition-delay: 0.24s; }
+    .stat-num {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--db-lava);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--db-ink-soft);
+    }
+
+    /* ── STACK CARDS (what we built) ─────────────────────────────── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .stack-card {
+      background: var(--db-white);
+      border-radius: 8px;
+      padding: 32px 28px;
+      box-shadow: 0 2px 12px rgba(27,49,57,0.07);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease;
+      border-top: 3px solid transparent;
+    }
+    .stack-card.visible { opacity: 1; transform: translateY(0); }
+    .stack-card:hover { box-shadow: 0 8px 32px rgba(27,49,57,0.13); }
+    .stack-card:nth-child(2) { transition-delay: 0.1s; }
+    .stack-card:nth-child(3) { transition-delay: 0.2s; }
+    .stack-card.accent-lava  { border-top-color: var(--db-lava); }
+    .stack-card.accent-coral { border-top-color: var(--db-coral); }
+    .stack-card.accent-green { border-top-color: var(--db-green); }
+    .stack-card.accent-navy  { border-top-color: var(--db-navy-700); }
+    .stack-card.accent-amber { border-top-color: var(--db-amber); }
+    .stack-card.accent-slate { border-top-color: var(--db-slate); }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+    .card-icon-placeholder {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: var(--db-oat-medium);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stack-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--db-navy);
+      margin-bottom: 8px;
+    }
+    .stack-card p {
+      font-size: 14px;
+      color: var(--db-ink-soft);
+      line-height: 1.6;
+    }
+    .code-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--db-navy-700);
+      background: var(--db-oat-medium);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* ── CI/CD PIPELINE ANIMATION ────────────────────────────────── */
+    .pipeline-wrap {
+      background: var(--db-ink-deep);
+      border-radius: 12px;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pipeline-nodal {
+      position: absolute;
+      right: -60px;
+      bottom: -80px;
+      width: 360px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .pipeline-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--db-coral);
+      margin-bottom: 24px;
+    }
+
+    /* Branch selector */
+    .branch-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .branch-chip {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 4px;
+      padding: 5px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .branch-chip.active, .branch-chip:hover {
+      background: rgba(255,95,70,0.2);
+      border-color: var(--db-coral);
+      color: var(--db-white);
+    }
+
+    /* Flow stages */
+    .flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+    }
+    .flow-stage {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      opacity: 0;
+      transform: translateX(-16px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .flow-stage.visible { opacity: 1; transform: translateX(0); }
+    .flow-stage:nth-child(1) { transition-delay: 0.0s; }
+    .flow-stage:nth-child(3) { transition-delay: 0.15s; }
+    .flow-stage:nth-child(5) { transition-delay: 0.30s; }
+    .flow-stage:nth-child(7) { transition-delay: 0.45s; }
+    .flow-stage:nth-child(9) { transition-delay: 0.60s; }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      padding-top: 20px;
+      flex-shrink: 0;
+    }
+    .flow-arrow svg {
+      width: 28px;
+      height: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .flow-arrow svg.visible { opacity: 1; }
+    .flow-arrow:nth-child(2) svg { transition-delay: 0.1s; }
+    .flow-arrow:nth-child(4) svg { transition-delay: 0.25s; }
+    .flow-arrow:nth-child(6) svg { transition-delay: 0.40s; }
+    .flow-arrow:nth-child(8) svg { transition-delay: 0.55s; }
+
+    .stage-dot {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 22px;
+      position: relative;
+    }
+    .stage-dot.state-idle    { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2); }
+    .stage-dot.state-running { background: rgba(255,171,0,0.18); border: 2px solid var(--db-amber); animation: pulse-amber 1.6s ease-in-out infinite; }
+    .stage-dot.state-success { background: rgba(0,169,114,0.18); border: 2px solid var(--db-green); }
+    .stage-dot.state-hold    { background: rgba(255,95,70,0.18); border: 2px solid var(--db-coral); animation: pulse-coral 1.6s ease-in-out infinite; }
+
+    @keyframes pulse-amber {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,171,0,0.4); }
+      50%      { box-shadow: 0 0 0 8px rgba(255,171,0,0); }
+    }
+    @keyframes pulse-coral {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,95,70,0.4); }
+      50%      { box-shadow: 0 0 0 8px rgba(255,95,70,0); }
+    }
+
+    .stage-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--db-white);
+      margin-bottom: 4px;
+    }
+    .stage-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      font-family: 'DM Mono', monospace;
+    }
+    .stage-badge {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+    .badge-success { background: rgba(0,169,114,0.2); color: var(--db-green); }
+    .badge-hold    { background: rgba(255,95,70,0.2); color: var(--db-coral); }
+    .badge-idle    { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
+    .badge-running { background: rgba(255,171,0,0.2); color: var(--db-amber); }
+
+    /* Animated play button */
+    .play-row { display: flex; gap: 12px; margin-top: 32px; }
+    .play-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--db-lava);
+      color: var(--db-white);
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+    .play-btn:hover { background: #e0301c; }
+    .play-btn:active { transform: scale(0.98); }
+    .play-btn svg { width: 14px; height: 14px; }
+
+    .reset-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .reset-btn:hover { background: rgba(255,255,255,0.14); }
+
+    /* Log terminal */
+    .log-box {
+      margin-top: 24px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 6px;
+      padding: 16px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      min-height: 80px;
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .log-line { display: block; opacity: 0; transition: opacity 0.3s ease; }
+    .log-line.show { opacity: 1; }
+    .log-ok   { color: var(--db-green); }
+    .log-warn { color: var(--db-amber); }
+    .log-info { color: var(--db-coral); }
+
+    /* ── FEATURE BRANCH FLOW ─────────────────────────────────────── */
+    .branch-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      counter-reset: step;
+    }
+    .branch-step {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .branch-step.visible { opacity: 1; transform: translateY(0); }
+    .branch-step:nth-child(2) { transition-delay: 0.08s; }
+    .branch-step:nth-child(3) { transition-delay: 0.16s; }
+    .branch-step:nth-child(4) { transition-delay: 0.24s; }
+    .branch-step:nth-child(5) { transition-delay: 0.32s; }
+    .step-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--db-lava);
+      color: var(--db-white);
+      font-weight: 700;
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--db-navy);
+      margin-bottom: 6px;
+    }
+    .step-body { font-size: 13px; color: var(--db-ink-soft); line-height: 1.55; }
+    .step-code {
+      display: block;
+      margin-top: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--db-navy-700);
+      background: var(--db-oat-medium);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    /* Connecting arrows between steps */
+    .branch-flow-wrap { position: relative; }
+    .branch-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 20px;
+    }
+
+    /* ── MEDALLION FLOW ──────────────────────────────────────────── */
+    .medallion-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--db-white);
+      border-radius: 8px;
+      padding: 32px 32px;
+      box-shadow: 0 2px 12px rgba(27,49,57,0.07);
+      overflow: hidden;
+    }
+    .med-tier {
+      flex: 1;
+      text-align: center;
+      padding: 20px 16px;
+      border-radius: 6px;
+      opacity: 0;
+      transform: scale(0.94);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .med-tier.visible { opacity: 1; transform: scale(1); }
+    .med-tier:nth-child(1) { transition-delay: 0.0s; }
+    .med-tier:nth-child(3) { transition-delay: 0.15s; }
+    .med-tier:nth-child(5) { transition-delay: 0.30s; }
+    .med-arrow {
+      color: var(--db-gray-300);
+      font-size: 20px;
+      flex-shrink: 0;
+      padding: 0 4px;
+      padding-top: 8px;
+    }
+    .tier-bronze { background: rgba(205,127,50,0.10); border: 1px solid rgba(205,127,50,0.3); }
+    .tier-silver { background: rgba(97,135,148,0.10); border: 1px solid rgba(97,135,148,0.3); }
+    .tier-gold   { background: rgba(252,186,51,0.12); border: 1px solid rgba(252,186,51,0.4); }
+    .tier-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .tier-bronze .tier-label { color: #8B5C1A; }
+    .tier-silver .tier-label { color: var(--db-slate); }
+    .tier-gold   .tier-label { color: #A0780A; }
+    .tier-tables { font-size: 12px; color: var(--db-ink-soft); line-height: 1.7; font-family: 'DM Mono', monospace; }
+
+    /* ── ENV TARGETS ─────────────────────────────────────────────── */
+    .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .env-card {
+      border-radius: 8px;
+      padding: 32px 28px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s;
+    }
+    .env-card.visible { opacity: 1; transform: translateY(0); }
+    .env-card:nth-child(2) { transition-delay: 0.12s; }
+    .env-card:hover { box-shadow: 0 8px 32px rgba(27,49,57,0.13); }
+    .env-dev  { background: var(--db-white); border: 1px solid var(--db-line); box-shadow: 0 2px 12px rgba(27,49,57,0.06); }
+    .env-prod { background: var(--db-navy); border: 1px solid var(--db-navy-700); }
+    .env-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
+    .env-dev  .env-badge { background: var(--db-oat-medium); color: var(--db-ink-soft); }
+    .env-prod .env-badge { background: var(--db-lava); color: var(--db-white); }
+    .env-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+    .env-dev  h3 { color: var(--db-navy); }
+    .env-prod h3 { color: var(--db-white); }
+    .env-list { list-style: none; }
+    .env-list li {
+      font-size: 14px;
+      padding: 7px 0;
+      border-bottom: 1px solid;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .env-dev  .env-list li { border-color: var(--db-line); color: var(--db-ink-soft); }
+    .env-prod .env-list li { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+    .env-list li:last-child { border-bottom: none; }
+    .env-check { color: var(--db-green); flex-shrink: 0; font-weight: 700; }
+    .env-prod .env-check { color: var(--db-coral); }
+    .env-mono {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 4px;
+    }
+    .env-dev  .env-mono { background: var(--db-oat-medium); color: var(--db-navy-700); }
+    .env-prod .env-mono { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+
+    /* ── REPO STRUCTURE ──────────────────────────────────────────── */
+    .repo-tree {
+      background: var(--db-ink-deep);
+      border-radius: 8px;
+      padding: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+      color: rgba(255,255,255,0.65);
+    }
+    .tree-folder { color: var(--db-coral); font-weight: 500; }
+    .tree-file   { color: rgba(255,255,255,0.6); }
+    .tree-key    { color: var(--db-amber); }
+    .tree-comment{ color: rgba(255,255,255,0.28); font-style: italic; }
+    .tree-line   { display: block; opacity: 0; transform: translateX(-8px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .tree-line.show { opacity: 1; transform: translateX(0); }
+
+    /* ── FOOTER ──────────────────────────────────────────────────── */
+    .footer {
+      background: var(--db-ink-deep);
+      padding: 48px 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-logo { width: 120px; opacity: 0.85; }
+    .footer-text { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .footer-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--db-coral);
+      text-decoration: none;
+    }
+    .footer-link:hover { text-decoration: underline; }
+
+    /* ── DIVIDER ─────────────────────────────────────────────────── */
+    .coral-rule {
+      width: 48px;
+      height: 3px;
+      background: var(--db-coral);
+      border-radius: 2px;
+      margin-bottom: 32px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <img src="illustration-nodal-01.svg" class="hero-nodal" alt="" />
+  <img src="illustration-nodal-03.svg" class="hero-nodal-2" alt="" />
+  <img src="databricks-logo-white.svg" class="hero-logo" alt="Databricks" />
+  <p class="hero-eyebrow">Pop Mart · Databricks Asset Bundles</p>
+  <h1>From a Git merge to a<br><span>production pipeline</span><br>with zero manual steps</h1>
+  <p class="hero-sub">A complete CI/CD demo — Lakeflow Declarative Pipeline, Lakeflow Job, GitHub Actions, and environment-aware deployments, built on Databricks Asset Bundles.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">databricks bundle deploy</span>
+    <span class="hero-tag">mode: development</span>
+    <span class="hero-tag">mode: production</span>
+    <span class="hero-tag">GitHub Actions</span>
+    <span class="hero-tag">approval gate</span>
+  </div>
+</section>
+
+<!-- ── STATS ─────────────────────────────────────────────────────────── -->
+<section class="section section-alt">
+  <p class="section-eyebrow">by the numbers</p>
+  <h2>What got built</h2>
+  <div class="coral-rule"></div>
+  <div class="stat-row" id="stats">
+    <div class="stat-card">
+      <div class="stat-num">~8s</div>
+      <div class="stat-label">dev deployment time per push</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">2</div>
+      <div class="stat-label">environment targets — dev + prod</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">5</div>
+      <div class="stat-label">unit tests — run on every PR</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">0</div>
+      <div class="stat-label">manual workspace UI steps to deploy</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT WE BUILT ─────────────────────────────────────────────────── -->
+<section class="section" id="stack-section">
+  <p class="section-eyebrow">the stack</p>
+  <h2>Everything in this bundle</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">One repository is the source of truth for every Databricks resource — the pipeline, the job, the notebook, and the CI/CD workflows.</p>
+  <div class="stack-grid">
+    <div class="stack-card accent-coral" id="sc1">
+      <img src="lakeflow-jobs-icon-full-color.svg" class="card-icon" alt="" />
+      <h3>Lakeflow Declarative Pipeline</h3>
+      <p>AMER trade orders medallion — Bronze sources in <code>popmart.default</code> transformed through Silver and published to Gold in <code>popmart-prod</code>. Serverless, Photon-accelerated, triggered mode.</p>
+      <span class="code-tag">amer_trade_orders_medallion.sql</span>
+    </div>
+    <div class="stack-card accent-lava" id="sc2">
+      <img src="lakeflow-connect-icon-full-color.svg" class="card-icon" alt="" />
+      <h3>Lakeflow Job with two tasks</h3>
+      <p>Task 1 triggers the DLT pipeline. Task 2 runs a post-pipeline report notebook on serverless compute that validates Gold row counts and prints DQ expectation metrics.</p>
+      <span class="code-tag">resources/job.yml</span>
+    </div>
+    <div class="stack-card accent-green" id="sc3">
+      <img src="notebooks-icon-full-color.svg" class="card-icon" alt="" />
+      <h3>Post-pipeline report notebook</h3>
+      <p>Queries Gold tables and <code>system.lakeflow</code> after each run. Validates counts, checks expectation pass rates, and surfaces any tables with issues — all parameterised by the job.</p>
+      <span class="code-tag">src/notebooks/post_pipeline_report.py</span>
+    </div>
+    <div class="stack-card accent-navy" id="sc4">
+      <div class="card-icon-placeholder">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1B5162" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <h3>PR validation workflow</h3>
+      <p>On every pull request: <code>bundle validate -t dev</code> catches YAML errors, missing references, and schema violations before any code lands on main. Followed by <code>pytest</code> unit tests.</p>
+      <span class="code-tag">.github/workflows/pr-validation.yml</span>
+    </div>
+    <div class="stack-card accent-amber" id="sc5">
+      <div class="card-icon-placeholder">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A0780A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Deploy with approval gate</h3>
+      <p>On merge to main: auto-deploy to dev, then pause at a GitHub Environment gate requiring a named reviewer to approve before the prod deployment can proceed.</p>
+      <span class="code-tag">.github/workflows/deploy.yml</span>
+    </div>
+    <div class="stack-card accent-slate" id="sc6">
+      <div class="card-icon-placeholder">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#618794" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77A5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </div>
+      <h3>GitHub repo + 5 unit tests</h3>
+      <p>Public repo at <code>darrenwee96/popmart-dab-cicd</code>. Five tests verify pipeline SQL integrity — correct file, Gold views present, Silver views, decimal precision fix, and source table references.</p>
+      <span class="code-tag">tests/unit/test_placeholder.py</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CI/CD PIPELINE ANIMATION ──────────────────────────────────────── -->
+<section class="section section-alt" id="pipeline-section">
+  <p class="section-eyebrow">automation</p>
+  <h2>See the pipeline in motion</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">Every merge to main kicks off this sequence automatically. No one touches the workspace UI.</p>
+
+  <div class="pipeline-wrap">
+    <img src="illustration-nodal-03.svg" class="pipeline-nodal" alt="" />
+    <p class="pipeline-label">GitHub Actions · deploy.yml</p>
+
+    <div class="branch-row">
+      <span class="branch-chip active" onclick="selectBranch(this,'main')">main</span>
+      <span class="branch-chip" onclick="selectBranch(this,'feature/new-gold-view')">feature/new-gold-view</span>
+      <span class="branch-chip" onclick="selectBranch(this,'feature/decimal-fix')">feature/decimal-fix</span>
+    </div>
+
+    <div class="flow" id="flow">
+      <!-- Stage 1: Push -->
+      <div class="flow-stage" id="fs1">
+        <div class="stage-dot state-idle" id="dot1">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6)"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77A5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        </div>
+        <div class="stage-name">push to main</div>
+        <div class="stage-sub">trigger</div>
+        <span class="stage-badge badge-idle" id="b1">waiting</span>
+      </div>
+      <div class="flow-arrow" id="fa1"><svg id="arr1" viewBox="0 0 28 16" fill="none"><path d="M0 8h22M16 2l6 6-6 6" stroke="rgba(255,95,70,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 2: Validate -->
+      <div class="flow-stage" id="fs2">
+        <div class="stage-dot state-idle" id="dot2">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6)"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 0 0 1.946-.806 3.42 3.42 0 0 1 4.438 0 3.42 3.42 0 0 0 1.946.806 3.42 3.42 0 0 1 3.138 3.138 3.42 3.42 0 0 0 .806 1.946 3.42 3.42 0 0 1 0 4.438 3.42 3.42 0 0 0-.806 1.946 3.42 3.42 0 0 1-3.138 3.138 3.42 3.42 0 0 0-1.946.806 3.42 3.42 0 0 1-4.438 0 3.42 3.42 0 0 0-1.946-.806 3.42 3.42 0 0 1-3.138-3.138 3.42 3.42 0 0 0-.806-1.946 3.42 3.42 0 0 1 0-4.438 3.42 3.42 0 0 0 .806-1.946 3.42 3.42 0 0 1 3.138-3.138z"/></svg>
+        </div>
+        <div class="stage-name">bundle validate</div>
+        <div class="stage-sub">-t dev</div>
+        <span class="stage-badge badge-idle" id="b2">waiting</span>
+      </div>
+      <div class="flow-arrow" id="fa2"><svg id="arr2" viewBox="0 0 28 16" fill="none"><path d="M0 8h22M16 2l6 6-6 6" stroke="rgba(255,95,70,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 3: Deploy dev -->
+      <div class="flow-stage" id="fs3">
+        <div class="stage-dot state-idle" id="dot3">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6)"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        </div>
+        <div class="stage-name">deploy → dev</div>
+        <div class="stage-sub">~8s</div>
+        <span class="stage-badge badge-idle" id="b3">waiting</span>
+      </div>
+      <div class="flow-arrow" id="fa3"><svg id="arr3" viewBox="0 0 28 16" fill="none"><path d="M0 8h22M16 2l6 6-6 6" stroke="rgba(255,95,70,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 4: Approval -->
+      <div class="flow-stage" id="fs4">
+        <div class="stage-dot state-idle" id="dot4">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="stage-name">approval gate</div>
+        <div class="stage-sub">production env</div>
+        <span class="stage-badge badge-idle" id="b4">waiting</span>
+      </div>
+      <div class="flow-arrow" id="fa4"><svg id="arr4" viewBox="0 0 28 16" fill="none"><path d="M0 8h22M16 2l6 6-6 6" stroke="rgba(255,95,70,0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+      <!-- Stage 5: Deploy prod -->
+      <div class="flow-stage" id="fs5">
+        <div class="stage-dot state-idle" id="dot5">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(255,255,255,0.6)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stage-name">deploy → prod</div>
+        <div class="stage-sub">~11s</div>
+        <span class="stage-badge badge-idle" id="b5">waiting</span>
+      </div>
+    </div>
+
+    <div class="log-box" id="log">
+      <span class="log-line show" style="color:rgba(255,255,255,0.3)">// press "run pipeline" to watch the automation</span>
+    </div>
+
+    <div class="play-row">
+      <button class="play-btn" onclick="runPipeline()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        Run pipeline
+      </button>
+      <button class="reset-btn" onclick="resetPipeline()">Reset</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── MEDALLION FLOW ─────────────────────────────────────────────────── -->
+<section class="section" id="medallion-section">
+  <p class="section-eyebrow">data pipeline</p>
+  <h2>Bronze → Silver → Gold</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">The AMER trade orders pipeline reads from StarRocks-ingested Bronze tables and publishes clean, aggregated Gold materialized views for Genie and dashboards.</p>
+  <div class="medallion-row" id="med-row">
+    <div class="med-tier tier-bronze" id="mt1">
+      <div class="tier-label">Bronze</div>
+      <div class="tier-tables">
+        dwd_trd_amer_buy2s_<br>order_full_d<br><br>dws_amer_trade_<br>order_1d
+      </div>
+    </div>
+    <div class="med-arrow">→</div>
+    <div class="med-tier tier-silver" id="mt2">
+      <div class="tier-label">Silver</div>
+      <div class="tier-tables">
+        silver_order_<br>line_items<br><br>silver_trade_<br>order_daily
+      </div>
+    </div>
+    <div class="med-arrow">→</div>
+    <div class="med-tier tier-gold" id="mt3">
+      <div class="tier-label">Gold</div>
+      <div class="tier-tables">
+        gold_daily_sales_kpi<br>gold_product_performance<br>gold_channel_country_daily
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ENVIRONMENTS ───────────────────────────────────────────────────── -->
+<section class="section section-alt" id="env-section">
+  <p class="section-eyebrow">environment strategy</p>
+  <h2>Dev and prod in one workspace</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">Both targets deploy to the same workspace. <code>mode: development</code> auto-prefixes every resource so dev and prod never collide.</p>
+  <div class="env-grid">
+    <div class="env-card env-dev" id="ec1">
+      <span class="env-badge">dev</span>
+      <h3>mode: development</h3>
+      <ul class="env-list">
+        <li><span class="env-check">✓</span> Resource names auto-prefixed <code>[dev darren_wee]</code></li>
+        <li><span class="env-check">✓</span> Schedules paused automatically</li>
+        <li><span class="env-check">✓</span> Pipeline runs in development mode</li>
+        <li><span class="env-check">✓</span> Catalog: <code>popmart.popmart_medallion</code></li>
+        <li><span class="env-check">✓</span> Deploy in ~8s on every merge</li>
+      </ul>
+      <div class="env-mono">databricks bundle deploy -t dev</div>
+    </div>
+    <div class="env-card env-prod" id="ec2">
+      <span class="env-badge">prod</span>
+      <h3>mode: production</h3>
+      <ul class="env-list">
+        <li><span class="env-check">✓</span> Clean resource names, no prefix</li>
+        <li><span class="env-check">✓</span> Schedule active — daily 03:00 UTC</li>
+        <li><span class="env-check">✓</span> Fixed <code>root_path</code> — one canonical copy</li>
+        <li><span class="env-check">✓</span> Catalog: <code>popmart-prod.popmart_medallion</code></li>
+        <li><span class="env-check">✓</span> Requires reviewer approval to deploy</li>
+      </ul>
+      <div class="env-mono">databricks bundle deploy -t prod --auto-approve</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURE BRANCH FLOW ────────────────────────────────────────────── -->
+<section class="section section-dark" id="branch-section">
+  <p class="section-eyebrow" style="color:var(--db-coral)">developer workflow</p>
+  <h2>How a feature branch works</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">Every developer gets an isolated copy of the pipeline — no coordinator, no shared dev environment, no collisions.</p>
+  <div class="branch-flow" id="bf">
+    <div class="branch-step" id="bs1">
+      <div class="step-num">1</div>
+      <div class="step-title">Create branch</div>
+      <div class="step-body">Start from main, create a feature branch</div>
+      <span class="step-code">git checkout -b feature/my-change</span>
+    </div>
+    <div class="branch-step" id="bs2">
+      <div class="step-num">2</div>
+      <div class="step-title">Deploy locally</div>
+      <div class="step-body">Your personal dev copy — names prefixed with your username</div>
+      <span class="step-code">databricks bundle deploy</span>
+    </div>
+    <div class="branch-step" id="bs3">
+      <div class="step-num">3</div>
+      <div class="step-title">Open PR</div>
+      <div class="step-body">CI validates the bundle and runs unit tests automatically</div>
+      <span class="step-code">bundle validate + pytest</span>
+    </div>
+    <div class="branch-step" id="bs4">
+      <div class="step-num">4</div>
+      <div class="step-title">Merge to main</div>
+      <div class="step-body">Auto-deploys to dev, then holds for approval</div>
+      <span class="step-code">deploy dev → approval → prod</span>
+    </div>
+    <div class="branch-step" id="bs5">
+      <div class="step-num">5</div>
+      <div class="step-title">Approve prod</div>
+      <div class="step-body">Named reviewer approves and prod deploys in ~11s</div>
+      <span class="step-code">GitHub Environment gate</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── REPO TREE ──────────────────────────────────────────────────────── -->
+<section class="section" id="repo-section">
+  <p class="section-eyebrow">repo structure</p>
+  <h2>Everything lives in one repo</h2>
+  <div class="coral-rule"></div>
+  <p class="section-lead">Source code, resource definitions, tests, and deployment workflows — all versioned together in <code>darrenwee96/popmart-dab-cicd</code>.</p>
+  <div class="repo-tree" id="tree">
+    <span class="tree-line" id="tl0"><span class="tree-folder">popmart-dab-cicd/</span></span>
+    <span class="tree-line" id="tl1">├── <span class="tree-key">databricks.yml</span>          <span class="tree-comment"># bundle config, targets, variables</span></span>
+    <span class="tree-line" id="tl2">├── <span class="tree-folder">resources/</span></span>
+    <span class="tree-line" id="tl3">│   ├── <span class="tree-file">pipeline.yml</span>            <span class="tree-comment"># DLT pipeline — serverless, Photon</span></span>
+    <span class="tree-line" id="tl4">│   └── <span class="tree-file">job.yml</span>                 <span class="tree-comment"># Lakeflow Job — pipeline + notebook tasks</span></span>
+    <span class="tree-line" id="tl5">├── <span class="tree-folder">src/</span></span>
+    <span class="tree-line" id="tl6">│   ├── <span class="tree-folder">transformations/</span></span>
+    <span class="tree-line" id="tl7">│   │   └── <span class="tree-key">amer_trade_orders_medallion.sql</span>  <span class="tree-comment"># Bronze → Silver → Gold</span></span>
+    <span class="tree-line" id="tl8">│   └── <span class="tree-folder">notebooks/</span></span>
+    <span class="tree-line" id="tl9">│       └── <span class="tree-file">post_pipeline_report.py</span>  <span class="tree-comment"># Gold validation + DQ metrics</span></span>
+    <span class="tree-line" id="tl10">├── <span class="tree-folder">tests/unit/</span></span>
+    <span class="tree-line" id="tl11">│   └── <span class="tree-file">test_placeholder.py</span>     <span class="tree-comment"># 5 unit tests — run on every PR</span></span>
+    <span class="tree-line" id="tl12">└── <span class="tree-folder">.github/workflows/</span></span>
+    <span class="tree-line" id="tl13">    ├── <span class="tree-key">pr-validation.yml</span>       <span class="tree-comment"># validate + test on PRs</span></span>
+    <span class="tree-line" id="tl14">    └── <span class="tree-key">deploy.yml</span>              <span class="tree-comment"># dev → approval gate → prod</span></span>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <img src="databricks-logo-white.svg" class="footer-logo" alt="Databricks" />
+  <span class="footer-text">Pop Mart · AMER Trade Orders · DAB CI/CD Demo</span>
+  <a href="https://github.com/darrenwee96/popmart-dab-cicd" class="footer-link" target="_blank">github.com/darrenwee96/popmart-dab-cicd</a>
+</footer>
+
+<script>
+  /* ── INTERSECTION OBSERVER — fade/slide in on scroll ── */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible', 'show');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(
+    '.stat-card, .stack-card, .env-card, .branch-step, .med-tier'
+  ).forEach(el => io.observe(el));
+
+  /* Repo tree — staggered line reveal */
+  const treeObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.tree-line').forEach((l, i) => {
+          setTimeout(() => l.classList.add('show'), i * 60);
+        });
+        treeObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  const tree = document.getElementById('tree');
+  if (tree) treeObs.observe(tree);
+
+  /* Flow stages */
+  const flowObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.flow-stage').forEach(s => s.classList.add('visible'));
+        document.querySelectorAll('.flow-arrow svg').forEach(s => s.classList.add('visible'));
+        flowObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  const flowEl = document.getElementById('flow');
+  if (flowEl) flowObs.observe(flowEl);
+
+  /* Branch steps */
+  const branchObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.branch-step').forEach(s => s.classList.add('visible'));
+        branchObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  const branchEl = document.getElementById('bf');
+  if (branchEl) branchObs.observe(branchEl);
+
+  /* ── PIPELINE ANIMATION ── */
+  let running = false;
+
+  function selectBranch(el, name) {
+    document.querySelectorAll('.branch-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    resetPipeline();
+  }
+
+  function log(msg, cls, delay) {
+    setTimeout(() => {
+      const box = document.getElementById('log');
+      const line = document.createElement('span');
+      line.className = 'log-line ' + (cls || '');
+      line.textContent = msg;
+      box.appendChild(line);
+      requestAnimationFrame(() => line.classList.add('show'));
+      box.scrollTop = box.scrollHeight;
+    }, delay);
+  }
+
+  function setStage(n, state, badge, badgeCls, delay) {
+    setTimeout(() => {
+      const dot = document.getElementById('dot' + n);
+      const b   = document.getElementById('b'   + n);
+      dot.className = 'stage-dot state-' + state;
+      b.textContent  = badge;
+      b.className    = 'stage-badge badge-' + badgeCls;
+    }, delay);
+  }
+
+  function runPipeline() {
+    if (running) return;
+    running = true;
+
+    /* clear log */
+    const box = document.getElementById('log');
+    box.innerHTML = '';
+
+    const branch = document.querySelector('.branch-chip.active').textContent;
+
+    /* Stage 1 — push */
+    setStage(1, 'running', 'triggered', 'running', 0);
+    log('$ git push origin ' + branch, 'log-info', 0);
+    log('Enumerating objects: 5, done.', '', 300);
+    log('To github.com:darrenwee96/popmart-dab-cicd.git', '', 600);
+
+    /* Stage 1 done, stage 2 start */
+    setStage(1, 'success', 'pushed', 'success', 900);
+    setStage(2, 'running', 'running', 'running', 950);
+    log('', '', 1000);
+    log('▶  Deploy / Deploy → dev', 'log-info', 1100);
+    log('Installing Databricks CLI...', '', 1400);
+    log('databricks bundle validate -t dev', 'log-info', 1900);
+    log('✓  Bundle validated successfully', 'log-ok', 2400);
+
+    /* Stage 2 done, stage 3 start */
+    setStage(2, 'success', 'passed', 'success', 2700);
+    setStage(3, 'running', 'deploying', 'running', 2750);
+    log('databricks bundle deploy -t dev --auto-approve', 'log-info', 2900);
+    log('Uploading bundle files...', '', 3200);
+    log('[dev darren_wee] amer_trade_orders_medallion  created', 'log-ok', 3800);
+    log('[dev darren_wee] amer_trade_orders_orchestrator  created', 'log-ok', 4300);
+
+    /* Stage 3 done, stage 4 (approval) */
+    setStage(3, 'success', '✓ 8s', 'success', 4700);
+    setStage(4, 'hold',    'awaiting', 'hold', 4750);
+    log('', '', 4800);
+    log('⏳  Waiting for approval — production environment gate', 'log-warn', 5000);
+    log('    Reviewer: darrenwee96', '', 5400);
+
+    /* Simulate approval after pause */
+    setTimeout(() => {
+      log('✓  Approved by darrenwee96', 'log-ok', 0);
+      setStage(4, 'success', '✓ approved', 'success', 200);
+      setStage(5, 'running', 'deploying', 'running', 300);
+
+      setTimeout(() => {
+        log('databricks bundle deploy -t prod --auto-approve', 'log-info', 0);
+        log('Uploading bundle files to prod workspace...', '', 400);
+        log('amer_trade_orders_medallion  updated', 'log-ok', 1000);
+        log('amer_trade_orders_orchestrator  updated', 'log-ok', 1500);
+        log('', '', 1700);
+        log('✓  Deployment complete — popmart-prod.popmart_medallion', 'log-ok', 2000);
+
+        setStage(5, 'success', '✓ 11s', 'success', 2200);
+        running = false;
+      }, 500);
+    }, 3500);
+  }
+
+  function resetPipeline() {
+    running = false;
+    [1,2,3,4,5].forEach(n => setStage(n, 'idle', 'waiting', 'idle', 0));
+    const box = document.getElementById('log');
+    box.innerHTML = '<span class="log-line show" style="color:rgba(255,255,255,0.3)">// press "run pipeline" to watch the automation</span>';
+  }
+</script>
+
+</body>
+</html>

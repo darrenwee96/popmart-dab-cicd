@@ -45,13 +45,13 @@ targets:
     mode: development   # resource names auto-prefixed: [dev <your-username>]
     default: true       # used when no -t flag is passed
     workspace:
-      host: https://YOUR-DEV-WORKSPACE.azuredatabricks.net
+      host: https://dbc-2e43b02f-eefb.cloud.databricks.com
 
   # ── Production — no prefix, strict validation, runs as service principal ──
   prod:
     mode: production
     workspace:
-      host: https://YOUR-PROD-WORKSPACE.azuredatabricks.net
+      host: https://dbc-2e43b02f-eefb.cloud.databricks.com
     # Uncomment once your service principal is set up:
     # run_as:
     #   service_principal_name: popmart-prod-sp

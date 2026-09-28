@@ -24,6 +24,7 @@ SELECT
   YEAR(rcvtime)                                    AS txn_year,
   MONTH(rcvtime)                                   AS txn_month,
   DAYOFWEEK(rcvtime)                               AS txn_dow,
+  HOUR(rcvtime)                                    AS txn_hour,
 
   -- Product
   gid                                              AS product_group_id,
@@ -243,3 +244,40 @@ SELECT
     / NULLIF(ABS(LAG(net_revenue) OVER (PARTITION BY country_code, channel ORDER BY stat_date)), 0)
   , 4)                                                                            AS revenue_change_pct
 FROM enriched;
+
+
+CREATE OR REFRESH MATERIALIZED VIEW gold_hourly_sales_pattern (
+  txn_dow               INT            COMMENT 'Day of week (1=Sunday … 7=Saturday, per Spark DAYOFWEEK)',
+  day_name              STRING         COMMENT 'Human-readable day name',
+  txn_hour              INT            COMMENT 'Hour of day in 24h format (0–23)',
+  active_days           BIGINT         COMMENT 'Distinct calendar dates that had at least one sale in this day-of-week + hour slot (normalization base)',
+  total_transactions    BIGINT         COMMENT 'Total distinct POS transactions in this slot across all history',
+  total_items_sold      DECIMAL(28,2)  COMMENT 'Total quantity of items sold in this slot',
+  gross_revenue         DECIMAL(28,2)  COMMENT 'Sum of actual amounts paid in this slot (precision-corrected)',
+  avg_txns_per_day      DECIMAL(29,2)  COMMENT 'Average transactions per occurrence of this slot (total_transactions / active_days) — the staffing signal',
+  avg_revenue_per_day   DECIMAL(29,2)  COMMENT 'Average revenue per occurrence of this slot (gross_revenue / active_days)',
+  avg_transaction_value DECIMAL(29,2)  COMMENT 'Average revenue per transaction in this slot'
+)
+COMMENT 'Sales pattern by day-of-week and hour-of-day for Pop Mart AMER, normalized per calendar day so peak periods can be compared for staffing. One row per (day-of-week, hour) slot.'
+AS
+SELECT
+  txn_dow,
+  CASE txn_dow
+    WHEN 1 THEN 'Sunday'
+    WHEN 2 THEN 'Monday'
+    WHEN 3 THEN 'Tuesday'
+    WHEN 4 THEN 'Wednesday'
+    WHEN 5 THEN 'Thursday'
+    WHEN 6 THEN 'Friday'
+    WHEN 7 THEN 'Saturday'
+  END                                                                        AS day_name,
+  txn_hour,
+  COUNT(DISTINCT transaction_date)                                           AS active_days,
+  COUNT(DISTINCT transaction_id)                                             AS total_transactions,
+  SUM(quantity)                                                              AS total_items_sold,
+  SUM(actual_amount)                                                         AS gross_revenue,
+  CAST(ROUND(COUNT(DISTINCT transaction_id) / NULLIF(COUNT(DISTINCT transaction_date), 0), 2) AS DECIMAL(29,2))  AS avg_txns_per_day,
+  ROUND(SUM(actual_amount)             / NULLIF(COUNT(DISTINCT transaction_date), 0), 2)  AS avg_revenue_per_day,
+  ROUND(SUM(actual_amount)             / NULLIF(COUNT(DISTINCT transaction_id), 0),   2)  AS avg_transaction_value
+FROM silver_order_line_items
+GROUP BY txn_dow, txn_hour;

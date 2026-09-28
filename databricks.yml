@@ -23,6 +23,15 @@ bundle:
 include:
   - resources/*.yml
 
+# Keep the demo showcase (cicd-demo.html + its assets) out of the workspace upload —
+# these are documentation, not pipeline code.
+sync:
+  exclude:
+    - "cicd-demo.html"
+    - "*.svg"
+    - "colors_and_type.css"
+    - "fonts"
+
 variables:
   catalog:
     description: Unity Catalog where Silver & Gold tables are published.

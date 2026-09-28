@@ -14,3 +14,8 @@ dist/
 .env
 *.env
 db_config.json
+
+# Demo showcase assets (referenced by cicd-demo.html, not part of the pipeline)
+*.svg
+colors_and_type.css
+fonts/
